@@ -9,7 +9,8 @@
 
     <style type="text/css">
         body {
-            background: black;
+            background: url("./img/sea.gif") no-repeat ;
+            background-size: cover;
         }
 
         div#board {
@@ -17,7 +18,7 @@
             width: 1024px;
             height: 863px;
             margin: auto;
-            background: url("board.jpg") no-repeat;
+            background: url("./img/board.png") no-repeat;
         }
 
         div#messageArea {
@@ -54,15 +55,19 @@
         }
 
         .hit {
-            background: url("ship.png") no-repeat center center;
+            background: url("./img/ship.png") no-repeat center center;
         }
 
         .miss {
-            background: url("miss.png") no-repeat center center;
+            background: url("./img/miss.png") no-repeat center center;
         }
 
         .hint {
-            background: url("hint.png") no-repeat center center;
+            background: url("./img/hint.png") no-repeat center center;
+        }
+
+        .giveup {
+            background: url("./img/giveup.png") no-repeat center center;
         }
 
         h1 {
@@ -91,7 +96,7 @@
             <input type="button" onclick="giveUp()" value="포기">
         </form>
     </div>
-    <script type="text/javascript" src="battleship.js"></script>
+    <script type="text/javascript" src="./root/battleship.js"></script>
 </body>
 
 </html>

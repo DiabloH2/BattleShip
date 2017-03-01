@@ -3,9 +3,12 @@ var trs = document.getElementsByTagName("tr").length;
 var mark = ["A", "B", "C", "D", "E", "F", "G"];
 var attacked = []; // 공격했었던 좌표를 push 로 받음.
 var regChk = /^[A-G]{1}[0-6]{1}$/; // A0 ~ G6 좌표계가 맞는지 확인.
+var audioEft = document.createElement('audio');
+var audioBGM = document.createElement('audio');
+
 
 window.onload = function() {
-
+    soundBGM();
     tableDBinsert(); // 테이블의 ID, VALUE 값을 매칭.
     model.numShips = prompt("길이 3의 전투함을 몇대 생성하시겠습니까?");
 
@@ -135,7 +138,6 @@ var model = {
         for (var i = 0; i < this.shipsArray.length; i++) {
             if (this.shipsArray[i] == guessPoint) {
                 alert("적중 했습니다 !");
-                this.shipsArray[i] = "hit";
                 view.displayHit(guessPoint);
                 view.displayMessage("전함 격침 !");
                 ctrl.sunkCnt++;
@@ -230,6 +232,7 @@ function inputChk() {
         alert("형식에 맞게 좌표계를 입력해주세요.");
     } else {
         alert("입력한 좌표로 공격합니다!");
+				soundEft();
         ctrl.guessCnt++;
         model.fire(guessPoint);
     }
@@ -241,6 +244,24 @@ function targetCheck(event) { // table의 타겟의 value 값을 가져오고 in
 
 function giveUp() { // 포기 버튼을 눌렀을 때 모든 전함의 위치를 표시.
     for (var i = 0; i < model.shipsArray.length; i++) {
-        document.getElementById(model.shipsArray[i]).setAttribute("class", "hit");
+        document.getElementById(model.shipsArray[i]).setAttribute("class", "giveup");
     }
+}
+
+function soundEft(){
+		audioEft.style.visibility = 'hidden';
+		audioEft.style.position = 'absolute';
+		document.body.appendChild(audioEft);
+		audioEft.getAttribute('play');
+		audioEft.src = "./sound/boom.mp3";
+		audioEft.play();
+}
+
+function soundBGM(){
+		audioBGM.style.visibility = 'hidden';
+		audioBGM.style.position = 'absolute';
+		document.body.appendChild(audioBGM);
+		audioBGM.getAttribute('play');
+		audioBGM.src = "./sound/bgm.mp3";
+		audioBGM.play();
 }
