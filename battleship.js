@@ -57,18 +57,18 @@ window.onload = function(){
 
 
 var ctrl = {
-		guessCnt : 0
-	, sunkCnt : 0
-	, hintCnt : 0
-	, text : function(){
-		return 	this.sunkCnt/this.guessCnt>=1?"놀랍군요! 엄청난 감각 입니다.":
-						this.sunkCnt/this.guessCnt>=0.8?"상당한 실력이군요.":
-						this.sunkCnt/this.guessCnt>=0.6?"조금 할 줄 아시는군요?":
-						this.sunkCnt/this.guessCnt>=0.4?"위험했어요.":"맙소사, 살아남은게 다행입니다."
+			guessCnt : 0
+		, sunkCnt : 0
+		, hintCnt : 0
+		, text : function(){
+			return 	this.sunkCnt/this.guessCnt>=1?"놀랍군요! 엄청난 감각 입니다.":
+							this.sunkCnt/this.guessCnt>=0.8?"상당한 실력이군요.":
+							this.sunkCnt/this.guessCnt>=0.6?"조금 할 줄 아시는군요?":
+							this.sunkCnt/this.guessCnt>=0.4?"위험했어요.":"맙소사, 살아남은게 다행입니다."
 	}
 	, text2 : function(){
-		return this.hintCnt==0?"힌트를 사용하지 않다니, 대단합니다.":
-					 this.hintCnt>=(model.shipsArray.length/3)?"힌트를 적절히 썼군요.":"큰 도움없이 잘했습니다."
+		return 	this.hintCnt==0?"힌트를 사용하지 않다니, 대단합니다.":
+						this.hintCnt>=(model.shipsArray.length/3)?"힌트를 적절히 썼군요.":"큰 도움없이 잘했습니다."
 	}
 	, destroyChk : function(){
 		if(this.sunkCnt == model.shipsArray.length){
@@ -126,12 +126,11 @@ var view = {
 
 var model = {
 				numShips : 0
-			,	shipLength : 3
-			, shipsArray : []
-			, isSunk : false
-			, flag : false
-			,	fire : function(guessPoint){
-
+				,	shipLength : 3
+				, shipsArray : []
+				, isSunk : false
+				, flag : false
+				,	fire : function(guessPoint){
 					this.flag = false;
 					for(var i=0; i<this.shipsArray.length; i++){
 						if(this.shipsArray[i] == guessPoint){
@@ -145,23 +144,23 @@ var model = {
 					}
 
 					if(!this.flag){
-							view.displayMiss(guessPoint);
-							view.displayMessage("실패");
-							alert("이곳이 아닌가 봅니다.");
+						view.displayMiss(guessPoint);
+						view.displayMessage("실패");
+						alert("이곳이 아닌가 봅니다.");
 					}
 					attacked.push(guessPoint);
 					view.hints.length = 0; // 힌트배열에 push된 값 초기화.
 					view.hintTurn = 0; // 1회 공격 후 힌트를 사용할 수 있도록 설정.
 					ctrl.destroyChk();
-			}
-			, createShip : function(){
-				var ranY = Math.floor( Math.random() * trs );
-				var ranX = Math.floor( Math.random() * trs );
-				var ranZ = Math.floor( Math.random() * 2	 );		// 가로 세로 선택
-				var ran4 = Math.floor( Math.random() * 4	 );		// 배치될 수 없는 우측하단 2x2 일 때 판단
-				var header, middle, back;
+				}
+				, createShip : function(){
+					var ranY = Math.floor( Math.random() * trs );
+					var ranX = Math.floor( Math.random() * trs );
+					var ranZ = Math.floor( Math.random() * 2	 );		// 가로 세로 선택
+					var ran4 = Math.floor( Math.random() * 4	 );		// 배치될 수 없는 우측하단 2x2 일 때 판단
+					var header, middle, back;
 
-				if( ranY >= trs-2 && ranX >= trs-2 ){ // 우측 하단 2x2 부분에 배치 되었을 때
+					if( ranY >= trs-2 && ranX >= trs-2 ){ // 우측 하단 2x2 부분에 배치 되었을 때
 						if(ran4 == 0){
 							header = mark[trs-3]+(trs-2);
 							middle = mark[trs-2]+(trs-2);
@@ -179,7 +178,7 @@ var model = {
 							middle = mark[trs-2]+(trs-1);
 							back = mark[trs-1]+(trs-1);
 						}
-				}else if( ranY >= trs-2 ){	// y축 좌표값부터 하단 3칸에 전함 배치가 불가할 때
+					}else if( ranY >= trs-2 ){	// y축 좌표값부터 하단 3칸에 전함 배치가 불가할 때
 					header = mark[ranY]+(ranX);
 					middle = mark[ranY]+(ranX+1);
 					back = mark[ranY]+(ranX+2);
@@ -188,14 +187,14 @@ var model = {
 					middle = mark[ranY+1]+(ranX);
 					back = mark[ranY+2]+(ranX);
 				}else{
-						if(ranZ == 0){	// 자유 배치 가로
-							header = mark[ranY]+(ranX);
-							middle = mark[ranY]+(ranX+1);
-							back = mark[ranY]+(ranX+2);
-						}else{					// 자유 배치 세로
-							header = mark[ranY]+(ranX);
-							middle = mark[ranY+1]+(ranX);
-							back = mark[ranY+2]+(ranX);
+					if(ranZ == 0){	// 자유 배치 가로
+						header = mark[ranY]+(ranX);
+						middle = mark[ranY]+(ranX+1);
+						back = mark[ranY]+(ranX+2);
+					}else{					// 자유 배치 세로
+						header = mark[ranY]+(ranX);
+						middle = mark[ranY+1]+(ranX);
+						back = mark[ranY+2]+(ranX);
 						}
 				}
 
@@ -207,6 +206,7 @@ var model = {
 							if(i==j){
 								continue;
 							}
+
 							this.shipsArray.length = 0; // 중복된 배치가 있을 시 초기화
 						} // if END
 					} // in for END
@@ -216,14 +216,10 @@ var model = {
 
 
 
-function targetCheck(event){	// table의 타겟의 value 값을 가져오고 input에 값 할당
-	document.getElementById("guessInput").value=event.target.value;
-} // targetCheck END
 
 
 function inputChk(){
 	var guessPoint = document.getElementById("guessInput").value;
-
 	for(var i=0; i<attacked.length; i++){
 		if(attacked[i] == guessPoint){
 			return alert("이미 공격했던 좌표 입니다.");
@@ -239,6 +235,9 @@ function inputChk(){
 	}
 } // inputChk END
 
+function targetCheck(event){	// table의 타겟의 value 값을 가져오고 input에 값 할당
+	document.getElementById("guessInput").value=event.target.value;
+} // targetCheck END
 
 function giveUp(){ // 포기 버튼을 눌렀을 때 모든 전함의 위치를 표시.
 	for(var i=0; i<model.shipsArray.length; i++){
