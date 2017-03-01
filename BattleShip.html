@@ -21,10 +21,10 @@
             background: url("./img/board.png") no-repeat;
         }
 
-        div#messageArea {
+        h1#messageArea {
             position: absolute;
-            top: 0px;
-            left: 0px;
+            left: auto;
+            right: auto;
             color: rgb(83, 175, 19);
         }
 
@@ -79,7 +79,7 @@
 <body>
 
     <div id="board">
-        <div id="messageArea"></div>
+        <h1 id="messageArea" align="center"></h1>
         <table onclick="targetCheck(event)">
             <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
             <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
