@@ -39,9 +39,9 @@
     }
     form{
     	position: absolute;
-    	bottom: 37px;
-    	right: 20px;
-    	padding: 15px;
+    	bottom: 50px;
+    	right: -20px;
+    	padding: 3px;
     	background-color: rgb(83,175,19);
     }
     form input {
@@ -57,6 +57,10 @@
 	.miss{
 		background: url("miss.png") no-repeat center center;
 	}
+
+  .hint{
+    background: url("hint.png") no-repeat center center;
+  }
   h1{
     color: white;
   }
@@ -80,11 +84,12 @@
 </table>
 <form>
 <input type="text" id="guessInput" placeholder="좌표" value="" size="5px">
-<input type="button" id="fireButton" value="Fire">
+<input type="button" onclick="inputChk()" value="발사">
+<input type="button" onclick="view.hint()" value="힌트">
+<input type="button" onclick="giveUp()" value="포기">
 </form>
 </div>
 <script type="text/javascript" src="battleship.js"></script>
-<h1 id="list"></h1>
 </body>
 
 </html>

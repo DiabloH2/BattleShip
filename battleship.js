@@ -1,39 +1,183 @@
+var tds = document.getElementsByTagName("td");
+var trs = document.getElementsByTagName("tr").length;
+var mark= ["A","B","C","D","E","F","G"];
+var attacked = []; // 공격했었던 좌표를 push 로 받음.
+var regChk = /^[A-G]{1}[0-6]{1}$/; // A0 ~ G6 좌표계가 맞는지 확인.
+
 window.onload = function(){
-	var tds = document.getElementsByTagName("td");
-	var trs = document.getElementsByTagName("tr").length;
-	var mark= ["A","B","C","D","E","F","G"];
-	var shipsArray = [];
+
+	tableDBinsert(); // 테이블의 ID, VALUE 값을 매칭.
+	model.numShips = prompt("길이 3의 전투함을 몇대 생성하시겠습니까?");
+
+	while( model.shipsArray.length < model.numShips * model.shipLength ){
+		model.createShip(); // prompt 로 입력한 전투함의 생성 수 값 만큼 맵에 배치
+	}
 
 
-////////////////////// View           //////////////////
-	var view = {
+		function tableDBinsert(){
+				var line = ""; 		// 라인별 정보를 종합하고, 모은 정보를 tds에 담음.
+				var size;
+
+				for(var i=0; i<tds.length; i++){
+					size = i%trs;
+					// 격자판 라인 정보를 판단하고, 자동적으로 id 및 value 지정
+					// ex) 7*7 그리드 격자판 일 때 \^[A-G]{1}[0-6]{1}$\
+						if( i < trs ){
+							line = mark[0]+size; // "A"
+							tds[i].value = line;
+							tds[i].setAttribute("id",line);
+						}else if( i < trs * 2 ){
+							line = mark[1]+size; // "B"
+							tds[i].value = line;
+							tds[i].setAttribute("id",line);
+						}else if( i < trs * 3 ){
+							line = mark[2]+size; // "C"
+							tds[i].value = line;
+							tds[i].setAttribute("id",line);
+						}else if( i < trs * 4 ){
+							line = mark[3]+size; // "D"
+							tds[i].value = line;
+							tds[i].setAttribute("id",line);
+						}else if( i < trs * 5 ){
+							line = mark[4]+size; // "E"
+							tds[i].value = line;
+							tds[i].setAttribute("id",line);
+						}else if( i < trs * 6 ){
+							line = mark[5]+size; // "F"
+							tds[i].value = line;
+							tds[i].setAttribute("id",line);
+						}else{
+							line = mark[6]+size; // "G"
+							tds[i].value = line;
+							tds[i].setAttribute("id",line);
+						} // if END
+					} // for END
+				} // tableDBinsert END
+	} /////////////////// window.onload END //////////////////////
+
+
+var ctrl = {
+		guessCnt : 0
+	, sunkCnt : 0
+	, hintCnt : 0
+	, hintCntUp : function(){++this.hintCnt}
+	, guessCntUp : function(){++this.guessCnt;}
+	, sunkCntUp : function(){++this.sunkCnt;}
+	, text : function(){
+		return 	this.sunkCnt/this.guessCnt>=1?"놀랍군요! 엄청난 감각 입니다.":
+						this.sunkCnt/this.guessCnt>=0.8?"상당한 실력이군요.":
+						this.sunkCnt/this.guessCnt>=0.6?"조금 할 줄 아시는군요?":
+						this.sunkCnt/this.guessCnt>=0.4?"위험했어요.":"맙소사, 살아남은게 다행입니다."
+	}
+	, destroyChk : function(){
+		if(this.sunkCnt == model.shipsArray.length){
+			model.isSunk = true;
+			alert(
+				"모든 적 전함을 침몰 시켰습니다.\n"+
+				"파괴한 전함 : "+this.sunkCnt+"대\n"+
+				"명중률 : "+(this.sunkCnt/this.guessCnt)*100+"%\n"+
+				"평판 : "+this.text()
+			)
+		}
+	} // destroyChk END
+} // ctrl End
+
+
+
+
+
+
+
+function targetCheck(event){	// table의 타겟의 value 값을 가져오고 input에 값 할당
+	document.getElementById("guessInput").value=event.target.value;
+} // targetCheck END
+
+
+function inputChk(){
+	var guessPoint = document.getElementById("guessInput").value;
+
+	for(var i=0; i<attacked.length; i++){
+		if(attacked[i] == guessPoint){
+			return alert("이미 공격했던 좌표 입니다.");
+		}
+	}
+
+	if(!regChk.test(guessPoint)){
+		alert("형식에 맞게 좌표계를 입력해주세요.");
+	}else{
+		alert("입력한 좌표로 공격합니다!");
+		ctrl.guessCntUp();
+		model.fire(guessPoint);
+	}
+} // inputChk END
+
+
+var view = {
 			displayMessage : function(msg){
 				document.getElementById("messageArea").innerHTML=msg;
 			},
+
 			displayHit : function(location){
 				document.getElementById(location).setAttribute("class", "hit");
 			},
 
 			displayMiss : function(location){
 				document.getElementById(location).setAttribute("class", "miss");
+			},
+
+			hint : function(){
+				var hints = [];
+				for(var i=0; i<model.shipsArray.length; i++){
+					if(regChk.test(model.shipsArray[i])){
+						hints.push(model.shipsArray[i]);
+					}
+				}
+
+				if(ctrl.hintCnt < model.shipsArray.length/3){
+					ctrl.hintCntUp();
+					var ranHint = Math.floor( Math.random()*hints.length );
+					document.getElementById(hints[ranHint]).setAttribute("class","hint");
+				}else{
+					alert("힌트는 이미 많이 사용 하셨는데요?");
+				}
+				hints.length = 0;
 			}
-	}
-////////////////////// View End       //////////////////
+} // View End
 
 
-
-
-////////////////////// Model         ///////////////////
-	var model = {
-				boardSize : trs
-			,	numShips : 3
+var model = {
+				numShips : 0
 			,	shipLength : 3
-			,	shipsSunk : 0
+			, shipsArray : []
+			, isSunk : false
+			, flag : false
+			,	fire : function(guessPoint){
+					for(var i=0; i<this.shipsArray.length; i++){
+						if(this.shipsArray[i] == guessPoint){
+							this.flag = true;
+							ctrl.sunkCntUp();
+							this.shipsArray[i].value = "hit";
+							attacked.push(guessPoint);
+							view.displayHit(guessPoint);
+							view.displayMessage("전함 격침 !");
+							alert("적중 했습니다 !");
+
+						}
+					}
+
+					if(!this.flag){
+							view.displayMiss(guessPoint);
+							view.displayMessage("실패");
+							alert("이곳이 아닌가 봅니다.");
+					}
+					flag = false;
+					ctrl.destroyChk();
+			}
 			, createShip : function(){
 				var ranY = Math.floor( Math.random() * trs );
 				var ranX = Math.floor( Math.random() * trs );
-				var ranZ = Math.floor( Math.random() * 2 );		// 가로 세로 선택
-				var ran4 = Math.floor( Math.random() * 4 );		// 배치될 수 없는 우측하단 2x2 일 때 판단
+				var ranZ = Math.floor( Math.random() * 2	 );		// 가로 세로 선택
+				var ran4 = Math.floor( Math.random() * 4	 );		// 배치될 수 없는 우측하단 2x2 일 때 판단
 				var header, middle, back;
 
 				if( ranY >= trs-2 && ranX >= trs-2 ){ // 우측 하단 2x2 부분에 배치 되었을 때
@@ -74,88 +218,24 @@ window.onload = function(){
 						}
 				}
 
-				shipsArray.push(header, middle, back);
+				this.shipsArray.push(header, middle, back);
 
-				for(var i=0; i<shipsArray.length; i++){
-					for(var j=0; j<shipsArray.length; j++){
-
-						if(shipsArray[i]==shipsArray[j]){
+				for(var i=0; i<this.shipsArray.length; i++){
+					for(var j=0; j<this.shipsArray.length; j++){
+						if(this.shipsArray[i]==this.shipsArray[j]){
 							if(i==j){
 								continue;
 							}
-							console.log("중복된 배치가 확인되어 초기화 합니다.");
-							shipsArray.length = 0;
-						}
+							this.shipsArray.length = 0; // 중복된 배치가 있을 시 초기화
+						} // if END
 					} // in for END
 				} // out for END
 			} // createShip function END
+		} // Model End
+
+
+		function giveUp(){ // 포기 버튼을 눌렀을 때 모든 전함의 위치를 표시.
+			for(var i=0; i<model.shipsArray.length; i++){
+				document.getElementById(model.shipsArray[i]).setAttribute("class","hit");
+			}
 		}
-////////////////////// Model End     ///////////////////
-
-
-
-////////////////////// Controller     //////////////////
-////////////////////// Controller End //////////////////
-
-
-
-
-
-
-function tableDBinsert(){
-		var line = ""; 		// 라인별 정보를 종합하고, 모은 정보를 tds에 담음.
-		var size;
-
-		for(var i=0; i<tds.length; i++){
-			size = i%trs; 	// 격자판 라인 정보를 판단하고, 자동적으로 id 및 value 지정  ex) 7*7 그리드 격자판
-
-			if( i < trs ){
-				line = "A"+size;
-				tds[i].value = line;
-				tds[i].setAttribute("id",line);
-			}else if( i < trs * 2 ){
-				line = "B"+size;
-				tds[i].value = line;
-				tds[i].setAttribute("id",line);
-			}else if( i < trs * 3 ){
-				line = "C"+size;
-				tds[i].value = line;
-				tds[i].setAttribute("id",line);
-			}else if( i < trs * 4 ){
-				line = "D"+size;
-				tds[i].value = line;
-				tds[i].setAttribute("id",line);
-			}else if( i < trs * 5 ){
-				line = "E"+size;
-				tds[i].value = line;
-				tds[i].setAttribute("id",line);
-			}else if( i < trs * 6 ){
-				line = "F"+size;
-				tds[i].value = line;
-				tds[i].setAttribute("id",line);
-			}else{
-				line = "G"+size;
-				tds[i].value = line;
-				tds[i].setAttribute("id",line);
-			} // if END
-		} // for END
-	} // tableDBinsert END
-
-
-	tableDBinsert(); // 테이블의 ID, VALUE 값을 매칭.
-	model.numShips = prompt("길이 3의 전투함을 몇대 생성하시겠습니까?");
-
-	while( shipsArray.length < model.numShips * model.shipLength ){
-		model.createShip();
-	}
-
-	document.getElementById("list").innerHTML=shipsArray;
-	for(var i=0; i<shipsArray.length; i++){
-		document.getElementById(shipsArray[i]).setAttribute("class","hit");
-	} // 디버그
-} // window.onload END
-
-
-function targetCheck(event){	// 타겟의 value 값을 가져옴.
-	document.getElementById("guessInput").value=event.target.value;
-}
