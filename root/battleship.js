@@ -63,6 +63,7 @@ var ctrl = {
     guessCnt: 0,
     sunkCnt: 0,
     hintCnt: 0,
+    giveUpChk : false,
     text: function() {
         return this.sunkCnt / this.guessCnt >= 1 ? "놀랍군요! 엄청난 감각 입니다." :
             this.sunkCnt / this.guessCnt >= 0.8 ? "상당한 실력이군요." :
@@ -103,7 +104,9 @@ var view = {
         document.getElementById(location).setAttribute("class", "miss");
     },
     hint: function() {
-
+        if(ctrl.giveUpChk){
+          return alert("이미 포기하셨어요.\nF5를 통해 다시 시작해주세요.");
+        }
         for (var i = 0; i < model.shipsArray.length; i++) {
             if (regChk.test(model.shipsArray[i])) {
                 this.hints.push(model.shipsArray[i]);
@@ -224,6 +227,10 @@ var model = {
 
 function inputChk() {
     var guessPoint = document.getElementById("guessInput").value;
+    if(ctrl.giveUpChk == true){
+      return alert("이미 포기하셨어요.\nF5를 통해 다시 시작해주세요.");
+    }
+
     for (var i = 0; i < attacked.length; i++) {
         if (attacked[i] == guessPoint) {
             return alert("이미 공격했던 좌표 입니다.");
@@ -245,8 +252,11 @@ function targetCheck(event) { // table의 타겟의 value 값을 가져오고 in
 } // targetCheck END
 
 function giveUp() { // 포기 버튼을 눌렀을 때 모든 전함의 위치를 표시.
+    ctrl.giveUpChk = true;
     for (var i = 0; i < model.shipsArray.length; i++) {
+      if(regChk.test(model.shipsArray[i])){
         document.getElementById(model.shipsArray[i]).setAttribute("class", "giveup");
+      }
     }
 }
 
