@@ -138,6 +138,7 @@ var model = {
         for (var i = 0; i < this.shipsArray.length; i++) {
             if (this.shipsArray[i] == guessPoint) {
                 alert("적중 했습니다 !");
+                this.shipsArray[i] = "hit";
                 view.displayHit(guessPoint);
                 view.displayMessage("전함 격침 !");
                 ctrl.sunkCnt++;
@@ -146,6 +147,7 @@ var model = {
         }
 
         if (!this.flag) {
+            this.shipsArray[i] = "miss";
             view.displayMiss(guessPoint);
             view.displayMessage("실패");
             alert("이곳이 아닌가 봅니다.");
